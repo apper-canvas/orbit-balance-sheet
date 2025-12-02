@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { budgetService } from "@/services/api/budgetService";
+import { transactionService } from "@/services/api/transactionService";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Alert from "@/components/atoms/Alert";
-import BudgetCard from "@/components/molecules/BudgetCard";
-import BudgetForm from "@/components/organisms/BudgetForm";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
-import { budgetService } from "@/services/api/budgetService";
-import { transactionService } from "@/services/api/transactionService";
+import Button from "@/components/atoms/Button";
+import Alert from "@/components/atoms/Alert";
+import BudgetForm from "@/components/organisms/BudgetForm";
+import BudgetCard from "@/components/molecules/BudgetCard";
 import { calculateBudgetProgress } from "@/utils/calculations";
 
 const Budgets = () => {
@@ -23,12 +23,15 @@ const Budgets = () => {
   const budgetsWithProgress = budgets.length > 0 && transactions.length > 0 
     ? calculateBudgetProgress(budgets, transactions) 
     : [];
-  const totalBudget = budgets.reduce((sum, budget) => sum + budget.monthlyLimit, 0);
+
+  // Calculate totals
+  const totalBudget = budgets.reduce((sum, budget) => sum + budget.amount, 0);
   const totalSpent = budgetsWithProgress.reduce((sum, budget) => sum + budget.spent, 0);
   const overBudgetCount = budgetsWithProgress.filter(b => b.status === "exceeded").length;
   const warningBudgetCount = budgetsWithProgress.filter(b => b.status === "warning").length;
   const alertBudgetCount = overBudgetCount + warningBudgetCount;
-useEffect(() => {
+
+  useEffect(() => {
     loadData();
   }, []);
 

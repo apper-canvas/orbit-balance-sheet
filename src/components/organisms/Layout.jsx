@@ -6,12 +6,13 @@ import ApperIcon from "@/components/ApperIcon";
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navigation = [
+const navigation = [
     { name: "Dashboard", href: "", icon: "LayoutDashboard" },
     { name: "Transactions", href: "transactions", icon: "Receipt" },
     { name: "Budgets", href: "budgets", icon: "PieChart" },
     { name: "Goals", href: "goals", icon: "Target" },
     { name: "Reports", href: "reports", icon: "BarChart3" },
+    { name: "Settings", href: "settings", icon: "Settings" },
   ];
 
   const toggleMobileMenu = () => {

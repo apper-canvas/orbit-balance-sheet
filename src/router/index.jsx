@@ -7,6 +7,7 @@ const Transactions = lazy(() => import("@/components/pages/Transactions"));
 const Budgets = lazy(() => import("@/components/pages/Budgets"));
 const Goals = lazy(() => import("@/components/pages/Goals"));
 const Reports = lazy(() => import("@/components/pages/Reports"));
+const Settings = lazy(() => import("@/components/pages/Settings"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 
 const LoadingFallback = () => (
@@ -54,11 +55,19 @@ const mainRoutes = [
       </Suspense>
     )
   },
-  {
+{
     path: "reports",
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <Reports />
+      </Suspense>
+    )
+  },
+  {
+    path: "settings",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <Settings />
       </Suspense>
     )
   },

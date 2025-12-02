@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Card from "@/components/atoms/Card";
-import FormField from "@/components/molecules/FormField";
 import { budgetService } from "@/services/api/budgetService";
 import { categoryService } from "@/services/api/categoryService";
+import ApperIcon from "@/components/ApperIcon";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Card from "@/components/atoms/Card";
+import FormField from "@/components/molecules/FormField";
 import { getCurrentMonth } from "@/utils/formatters";
 
 const BudgetForm = ({ budget, onSave, onCancel }) => {
@@ -22,8 +22,9 @@ const BudgetForm = ({ budget, onSave, onCancel }) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    loadCategories();
+loadCategories();
   }, []);
+
 
   useEffect(() => {
     if (budget) {
