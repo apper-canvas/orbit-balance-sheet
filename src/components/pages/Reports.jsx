@@ -1,42 +1,50 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { transactionService } from "@/services/api/transactionService";
+import { savingsGoalService } from "@/services/api/savingsGoalService";
+import { budgetService } from "@/services/api/budgetService";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
-import Card from "@/components/atoms/Card";
-import ExpenseChart from "@/components/organisms/ExpenseChart";
-import SpendingTrendChart from "@/components/organisms/SpendingTrendChart";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
-import { transactionService } from "@/services/api/transactionService";
-import { 
-  calculateCategoryBreakdown, 
-  calculateSpendingTrend, 
-  calculateMonthlyTotals 
-} from "@/utils/calculations";
-import { formatCurrency, getMonthName, getCurrentMonth } from "@/utils/formatters";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
+import ExpenseChart from "@/components/organisms/ExpenseChart";
+import SpendingTrendChart from "@/components/organisms/SpendingTrendChart";
+import Goals from "@/components/pages/Goals";
+import Settings from "@/components/pages/Settings";
+import Budgets from "@/components/pages/Budgets";
+import { formatCurrency, getCurrentMonth, getMonthName } from "@/utils/formatters";
+import { calculateBudgetProgress, calculateCategoryBreakdown, calculateMonthlyTotals, calculateSavingsProgress, calculateSpendingTrend } from "@/utils/calculations";
 
 const Reports = () => {
   const [transactions, setTransactions] = useState([]);
+  const [savingsGoals, setSavingsGoals] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth().month);
   const [selectedYear, setSelectedYear] = useState(getCurrentMonth().year);
   const [reportType, setReportType] = useState("monthly");
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    setLoading(true);
-    setError("");
-    
+  // Load all data for comprehensive reports
+  const loadReportsData = async () => {
     try {
-      const data = await transactionService.getAll();
-      setTransactions(data);
-    } catch (err) {
+      setLoading(true);
+      setError("");
+      
+      const [transactionData, goalsData, budgetData] = await Promise.all([
+        transactionService.getAll(),
+        savingsGoalService.getAll(),
+        budgetService.getAll()
+      ]);
+      
+      setTransactions(transactionData);
+      setSavingsGoals(goalsData);
+      setBudgets(budgetData);
+    } catch (error) {
+      console.error('Error loading reports data:', error);
       setError("Failed to load reports data. Please try again.");
       toast.error("Failed to load reports data");
     } finally {
@@ -44,50 +52,72 @@ const Reports = () => {
     }
   };
 
+  useEffect(() => {
+    loadReportsData();
+  }, []);
+
+  // Export report data
   const exportData = () => {
-    const data = getReportData();
-    const csvContent = generateCSV(data);
-    downloadCSV(csvContent, `financial-report-${reportType}-${selectedYear}-${selectedMonth + 1}.csv`);
+    const reportData = getReportData();
+    const exportContent = {
+      reportType,
+      period: reportType === "monthly" 
+        ? `${getMonthName(selectedMonth)} ${selectedYear}` 
+        : selectedYear.toString(),
+      summary: reportData.monthlyTotals,
+      categoryBreakdown: reportData.categoryBreakdown,
+      insights: getEnhancedInsights(),
+      generatedAt: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(exportContent, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `financial-report-${reportType}-${selectedYear}${reportType === 'monthly' ? `-${selectedMonth + 1}` : ''}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
     toast.success("Report exported successfully");
   };
 
-  const generateCSV = (data) => {
-    const headers = ["Category", "Amount", "Percentage", "Count"];
-    const csvRows = [headers.join(",")];
-    
-    data.categoryBreakdown.forEach(item => {
-      const row = [
-        item.category,
-        item.amount.toFixed(2),
-        item.percentage.toFixed(1) + "%",
-        item.count
-      ];
-      csvRows.push(row.join(","));
-    });
-    
-    return csvRows.join("\n");
-  };
+  if (loading) return <Loading message="Loading financial reports..." />;
+  
+  if (error) {
+    return (
+      <ErrorView 
+        title="Reports Error"
+        message={error}
+        onRetry={loadReportsData}
+      />
+    );
+  }
 
-  const downloadCSV = (csvContent, filename) => {
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  if (transactions.length === 0) {
+    return (
+      <Empty 
+        icon="BarChart3"
+        title="No Transaction Data"
+        message="Add some transactions to generate financial reports and insights."
+        action={{ label: "Add Transaction", href: "/transactions" }}
+      />
+    );
+  }
+}
 
   const getReportData = () => {
-    if (reportType === "monthly") {
-      const monthlyTotals = calculateMonthlyTotals(transactions, selectedMonth, selectedYear);
+if (reportType === "monthly") {
+const getReportData = () => {
+const monthlyTotals = calculateMonthlyTotals(transactions, selectedMonth, selectedYear);
       const categoryBreakdown = calculateCategoryBreakdown(transactions, selectedMonth, selectedYear);
       return {
         monthlyTotals,
         categoryBreakdown,
-        spendingTrends: calculateSpendingTrend(transactions, 6)
+        spendingTrends: calculateSpendingTrend(transactions, 6),
+        goalProgress: calculateSavingsProgress(savingsGoals, transactions),
+        budgetPerformance: calculateBudgetProgress(budgets, transactions, selectedMonth, selectedYear)
       };
     } else {
       // Annual report
@@ -123,53 +153,97 @@ const Reports = () => {
       return {
         monthlyTotals: annualTotals,
         categoryBreakdown: formattedBreakdown,
-        spendingTrends: calculateSpendingTrend(transactions, 12)
+        spendingTrends: calculateSpendingTrend(transactions, 12),
+        goalProgress: calculateSavingsProgress(savingsGoals, transactions),
+        budgetPerformance: calculateBudgetProgress(budgets, transactions, null, selectedYear)
       };
     }
   };
 
-  if (loading) return <Loading message="Loading reports..." />;
-  if (error) return <ErrorView message={error} onRetry={loadData} />;
-
-  if (transactions.length === 0) {
-    return (
-      <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Financial Reports</h1>
-            <p className="text-gray-600 mt-1">Analyze your spending patterns and trends</p>
-          </div>
-        </div>
-        <Empty
-          icon="BarChart3"
-          title="No data for reports"
-          message="Add some transactions to see your financial reports and insights."
-        />
-      </div>
-    );
-  }
-
   const reportData = getReportData();
-  const { monthlyTotals, categoryBreakdown, spendingTrends } = reportData;
+const reportData = getReportData();
+  const { monthlyTotals, categoryBreakdown, spendingTrends, goalProgress, budgetPerformance } = reportData;
 
   // Get available years from transactions
   const availableYears = [...new Set(transactions.map(t => new Date(t.date).getFullYear()))].sort((a, b) => b - a);
 
-  // Calculate insights
-  const topCategory = categoryBreakdown.length > 0 ? categoryBreakdown[0] : null;
-  const averageTransaction = monthlyTotals.transactions.length > 0 
-    ? monthlyTotals.expenses / monthlyTotals.transactions.filter(t => t.type === "expense").length 
-    : 0;
+  // Enhanced insights calculations
+  const getEnhancedInsights = () => {
+    const topCategory = categoryBreakdown.length > 0 ? categoryBreakdown[0] : null;
+    const averageTransaction = monthlyTotals.transactions.length > 0 
+      ? monthlyTotals.expenses / monthlyTotals.transactions.filter(t => t.type === "expense").length 
+      : 0;
+    const savingsRate = monthlyTotals.income > 0 ? (monthlyTotals.balance / monthlyTotals.income) * 100 : 0;
+    
+    // Financial health scoring (0-100)
+    const financialHealthScore = Math.min(100, Math.max(0, 
+      (savingsRate > 0 ? 25 : 0) + // Positive savings rate: 25 points
+      (savingsRate >= 20 ? 25 : savingsRate * 1.25) + // High savings rate: up to 25 points
+      (budgetPerformance.length > 0 ? 25 : 0) + // Has budgets: 25 points
+      (goalProgress.length > 0 ? 25 : 0) // Has goals: 25 points
+    ));
+    
+    return {
+      topCategory,
+      averageTransaction,
+      savingsRate,
+      financialHealthScore,
+      recommendations: generateRecommendations(savingsRate, topCategory, budgetPerformance)
+    };
+  };
 
-  const savingsRate = monthlyTotals.income > 0 ? (monthlyTotals.balance / monthlyTotals.income) * 100 : 0;
+  // Generate personalized recommendations
+  const generateRecommendations = (savingsRate, topCategory, budgetPerformance) => {
+    const recommendations = [];
+    
+    if (savingsRate < 10) {
+      recommendations.push({
+        type: "savings",
+        priority: "high",
+        title: "Increase Your Savings Rate",
+        message: "Aim to save at least 10-20% of your income for better financial security."
+      });
+    }
+    
+    if (topCategory && topCategory.percentage > 40) {
+      recommendations.push({
+        type: "spending",
+        priority: "medium",
+        title: `Review ${topCategory.category} Spending`,
+        message: `${topCategory.category} accounts for ${topCategory.percentage.toFixed(1)}% of your expenses. Consider ways to optimize this category.`
+      });
+    }
+    
+    if (budgetPerformance.some(b => b.percentage > 100)) {
+      recommendations.push({
+        type: "budget",
+        priority: "high",
+        title: "Budget Overspending Alert",
+        message: "You've exceeded your budget in some categories. Review and adjust your spending patterns."
+      });
+    }
+    
+    if (goalProgress.some(g => g.monthsToGoal > 24)) {
+      recommendations.push({
+        type: "goals",
+        priority: "medium",
+        title: "Accelerate Goal Progress",
+        message: "Some savings goals may take longer than expected. Consider increasing monthly contributions."
+      });
+    }
+    
+    return recommendations;
+  };
 
+const insights = getEnhancedInsights();
+  
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Financial Reports</h1>
-          <p className="text-gray-600 mt-1">Analyze your spending patterns and trends</p>
+          <p className="text-gray-600 mt-1">Comprehensive analysis with personalized insights</p>
         </div>
         <Button onClick={exportData} className="mt-4 md:mt-0">
           <ApperIcon name="Download" size={16} className="mr-2" />
@@ -223,7 +297,7 @@ const Reports = () => {
         </div>
       </Card>
 
-      {/* Report Summary */}
+{/* Report Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
           <div className="flex items-center space-x-3">
@@ -267,15 +341,18 @@ const Reports = () => {
           </div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+        <Card className="p-6 bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-              <ApperIcon name="Percent" size={24} />
+            <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
+              <ApperIcon name="Activity" size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Savings Rate</p>
-              <p className={`text-2xl font-bold ${savingsRate >= 0 ? "text-blue-700" : "text-red-700"}`}>
-                {savingsRate.toFixed(1)}%
+              <p className="text-sm font-medium text-gray-600">Financial Health</p>
+              <p className={`text-2xl font-bold ${
+                insights.financialHealthScore >= 70 ? "text-green-700" : 
+                insights.financialHealthScore >= 40 ? "text-yellow-600" : "text-red-700"
+              }`}>
+                {Math.round(insights.financialHealthScore)}/100
               </p>
             </div>
           </div>
@@ -294,13 +371,13 @@ const Reports = () => {
         />
       </div>
 
-      {/* Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+{/* Enhanced Insights Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Key Insights */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Insights</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Financial Overview</h3>
           <div className="space-y-4">
-            {topCategory && (
+            {insights.topCategory && (
               <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-primary-50 to-teal-50 rounded-lg">
                 <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
                   <ApperIcon name="TrendingUp" size={20} />
@@ -308,7 +385,7 @@ const Reports = () => {
                 <div>
                   <p className="font-medium text-gray-900">Top Spending Category</p>
                   <p className="text-sm text-gray-600">
-                    {topCategory.category} - {formatCurrency(topCategory.amount)} ({topCategory.percentage.toFixed(1)}%)
+                    {insights.topCategory.category} - {formatCurrency(insights.topCategory.amount)} ({insights.topCategory.percentage.toFixed(1)}%)
                   </p>
                 </div>
               </div>
@@ -321,13 +398,25 @@ const Reports = () => {
               <div>
                 <p className="font-medium text-gray-900">Average Transaction</p>
                 <p className="text-sm text-gray-600">
-                  {formatCurrency(averageTransaction)} per expense transaction
+                  {formatCurrency(insights.averageTransaction)} per expense transaction
                 </p>
               </div>
             </div>
             
             <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg">
               <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                <ApperIcon name="Percent" size={20} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Savings Rate</p>
+                <p className="text-sm text-gray-600">
+                  {insights.savingsRate.toFixed(1)}% of income saved
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg">
+              <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
                 <ApperIcon name="Receipt" size={20} />
               </div>
               <div>
@@ -340,7 +429,135 @@ const Reports = () => {
           </div>
         </Card>
 
-        {/* Category Details */}
+        {/* Personalized Recommendations */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Personalized Recommendations</h3>
+          <div className="space-y-3">
+            {insights.recommendations.length > 0 ? insights.recommendations.map((rec, index) => (
+              <div key={index} className={`p-4 rounded-lg border-l-4 ${
+                rec.priority === 'high' ? 'bg-red-50 border-red-500' :
+                rec.priority === 'medium' ? 'bg-yellow-50 border-yellow-500' :
+                'bg-blue-50 border-blue-500'
+              }`}>
+                <div className="flex items-start space-x-3">
+                  <div className={`p-1 rounded ${
+                    rec.priority === 'high' ? 'bg-red-100 text-red-600' :
+                    rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                    'bg-blue-100 text-blue-600'
+                  }`}>
+                    <ApperIcon name={
+                      rec.type === 'savings' ? 'PiggyBank' :
+                      rec.type === 'spending' ? 'TrendingDown' :
+                      rec.type === 'budget' ? 'AlertTriangle' :
+                      'Target'
+                    } size={16} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 text-sm">{rec.title}</p>
+                    <p className="text-xs text-gray-600 mt-1">{rec.message}</p>
+                  </div>
+                </div>
+              </div>
+            )) : (
+              <div className="text-center py-8 text-gray-500">
+                <ApperIcon name="CheckCircle" size={48} className="mx-auto mb-3 text-green-500" />
+                <p className="font-medium">Great job!</p>
+                <p className="text-sm">Your finances look healthy. Keep up the good work!</p>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Goals & Budget Progress */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress Tracking</h3>
+          
+          {/* Savings Goals Progress */}
+          {goalProgress.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Savings Goals</h4>
+              <div className="space-y-3">
+                {goalProgress.slice(0, 3).map((goal, index) => (
+                  <div key={index} className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-900">{goal.title}</span>
+                      <span className="text-xs text-gray-600">{goal.percentage.toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, goal.percentage)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-xs text-gray-500">
+                        {formatCurrency(goal.savedAmount)} saved
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {formatCurrency(goal.targetAmount)} goal
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Budget Performance */}
+          {budgetPerformance.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Budget Performance</h4>
+              <div className="space-y-3">
+                {budgetPerformance.slice(0, 3).map((budget, index) => (
+                  <div key={index} className={`p-3 rounded-lg ${
+                    budget.percentage <= 75 ? 'bg-gradient-to-r from-green-50 to-emerald-50' :
+                    budget.percentage <= 100 ? 'bg-gradient-to-r from-yellow-50 to-orange-50' :
+                    'bg-gradient-to-r from-red-50 to-rose-50'
+                  }`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-900">{budget.category}</span>
+                      <span className={`text-xs font-medium ${
+                        budget.percentage <= 75 ? 'text-green-600' :
+                        budget.percentage <= 100 ? 'text-yellow-600' :
+                        'text-red-600'
+                      }`}>{budget.percentage.toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          budget.percentage <= 75 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                          budget.percentage <= 100 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                          'bg-gradient-to-r from-red-500 to-rose-500'
+                        }`}
+                        style={{ width: `${Math.min(100, budget.percentage)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-xs text-gray-500">
+                        {formatCurrency(budget.spent)} spent
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {formatCurrency(budget.budgetAmount)} budgeted
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {goalProgress.length === 0 && budgetPerformance.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <ApperIcon name="Target" size={48} className="mx-auto mb-3" />
+              <p className="font-medium">No Goals or Budgets</p>
+              <p className="text-sm">Set up savings goals and budgets to track your progress here.</p>
+            </div>
+          )}
+</Card>
+      </div>
+
+      {/* Category Details */}
+      <div className="grid grid-cols-1 gap-6">
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Breakdown</h3>
           {categoryBreakdown.length > 0 ? (
