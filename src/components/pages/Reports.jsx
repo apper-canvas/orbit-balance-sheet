@@ -103,14 +103,13 @@ const Reports = () => {
         message="Add some transactions to generate financial reports and insights."
         action={{ label: "Add Transaction", href: "/transactions" }}
       />
+/>
     );
   }
-}
 
   const getReportData = () => {
 if (reportType === "monthly") {
-const getReportData = () => {
-const monthlyTotals = calculateMonthlyTotals(transactions, selectedMonth, selectedYear);
+      const monthlyTotals = calculateMonthlyTotals(transactions, selectedMonth, selectedYear);
       const categoryBreakdown = calculateCategoryBreakdown(transactions, selectedMonth, selectedYear);
       return {
         monthlyTotals,
@@ -158,10 +157,9 @@ const monthlyTotals = calculateMonthlyTotals(transactions, selectedMonth, select
         budgetPerformance: calculateBudgetProgress(budgets, transactions, null, selectedYear)
       };
     }
-  };
+};
 
   const reportData = getReportData();
-const reportData = getReportData();
   const { monthlyTotals, categoryBreakdown, spendingTrends, goalProgress, budgetPerformance } = reportData;
 
   // Get available years from transactions
@@ -235,9 +233,7 @@ const reportData = getReportData();
     return recommendations;
   };
 
-const insights = getEnhancedInsights();
-  
-  return (
+  const insights = getEnhancedInsights();
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -296,7 +292,9 @@ const insights = getEnhancedInsights();
           )}
         </div>
       </Card>
+</Card>
 
+      </Card>
 {/* Report Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
@@ -370,7 +368,7 @@ const insights = getEnhancedInsights();
           title={`${reportType === "monthly" ? "6-Month" : "12-Month"} Spending Trends`}
         />
       </div>
-
+</div>
 {/* Enhanced Insights Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Key Insights */}
