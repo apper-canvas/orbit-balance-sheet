@@ -4,7 +4,6 @@ import ApperIcon from "@/components/ApperIcon";
 import Card from "@/components/atoms/Card";
 import ProgressBar from "@/components/atoms/ProgressBar";
 import Badge from "@/components/atoms/Badge";
-
 const BudgetCard = ({ 
   budget, 
   onEdit, 
@@ -25,7 +24,7 @@ const BudgetCard = ({
     return iconMap[category] || "Circle";
   };
   
-  const getStatusColor = (status) => {
+const getStatusColor = (status) => {
     switch (status) {
       case "exceeded": return "error";
       case "warning": return "warning";
@@ -40,12 +39,57 @@ const BudgetCard = ({
       default: return "On Track";
     }
   };
+
+  const getCardBorderStyle = (status) => {
+    switch (status) {
+      case "exceeded": return "border-red-200 bg-red-50/30";
+      case "warning": return "border-yellow-200 bg-yellow-50/30";
+      default: return "border-gray-200 bg-white";
+    }
+  };
+
+  const getAlertIcon = (status) => {
+    switch (status) {
+      case "exceeded": return "AlertTriangle";
+      case "warning": return "AlertCircle";
+      default: return null;
+    }
+  };
   
-  return (
-    <Card className={cn("p-6", className)} hoverable>
+return (
+    <Card className={cn("p-6 border-2", getCardBorderStyle(budget.status), className)} hoverable>
+      {/* Alert Banner for Critical/Warning Status */}
+      {(budget.status === "exceeded" || budget.status === "warning") && (
+        <div className={cn(
+          "flex items-center space-x-2 p-2 mb-4 rounded-lg text-sm font-medium",
+          budget.status === "exceeded" 
+            ? "bg-red-100 text-red-800" 
+            : "bg-yellow-100 text-yellow-800"
+        )}>
+          <ApperIcon 
+            name={getAlertIcon(budget.status)} 
+            size={16} 
+            className={budget.status === "exceeded" ? "text-red-600" : "text-yellow-600"}
+          />
+          <span>
+            {budget.status === "exceeded" 
+              ? `Over budget by ${formatCurrency(budget.spent - budget.monthlyLimit)}`
+              : "Approaching budget limit"
+            }
+          </span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
+          <div className={cn(
+            "p-2 rounded-lg",
+            budget.status === "exceeded" 
+              ? "bg-red-100 text-red-600" 
+              : budget.status === "warning"
+              ? "bg-yellow-100 text-yellow-600"
+              : "bg-primary-100 text-primary-600"
+          )}>
             <ApperIcon name={getCategoryIcon(budget.category)} size={24} />
           </div>
           <div>

@@ -41,12 +41,21 @@ export const calculateBudgetProgress = (budgets, transactions) => {
     const percentage = budget.monthlyLimit > 0 ? (monthlySpent / budget.monthlyLimit) * 100 : 0;
     const remaining = budget.monthlyLimit - monthlySpent;
 
+    // Enhanced status calculation for alert system
+    let status = 'good';
+    if (percentage >= 100) {
+      status = 'exceeded';
+    } else if (percentage >= 80) {
+      status = 'warning';
+    }
+
     return {
       ...budget,
       spent: monthlySpent,
       percentage,
       remaining: Math.max(0, remaining),
-      status: percentage >= 100 ? 'exceeded' : percentage >= 80 ? 'warning' : 'good'
+      status,
+      alertLevel: percentage >= 100 ? 'critical' : percentage >= 80 ? 'warning' : 'normal'
     };
   });
 };

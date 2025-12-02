@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
+import Alert from "@/components/atoms/Alert";
 import BudgetCard from "@/components/molecules/BudgetCard";
 import BudgetForm from "@/components/organisms/BudgetForm";
 import Loading from "@/components/ui/Loading";
@@ -19,9 +20,24 @@ const Budgets = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
 
-  useEffect(() => {
+useEffect(() => {
     loadData();
   }, []);
+
+  // Check for budget alerts when data changes
+  useEffect(() => {
+    if (budgetsWithProgress.length > 0) {
+      const criticalBudgets = budgetsWithProgress.filter(b => b.status === "exceeded");
+      const warningBudgets = budgetsWithProgress.filter(b => b.status === "warning");
+      
+      // Show toast notifications for new critical alerts
+      criticalBudgets.forEach(budget => {
+        if (budget.percentage > 100) {
+          toast.error(`Budget Alert: ${budget.category} is ${Math.round(budget.percentage)}% over budget!`);
+        }
+      });
+    }
+  }, [budgetsWithProgress]);
 
   const loadData = async () => {
     setLoading(true);
@@ -69,11 +85,12 @@ const Budgets = () => {
   if (loading) return <Loading message="Loading budgets..." />;
   if (error) return <ErrorView message={error} onRetry={loadData} />;
 
-  const budgetsWithProgress = calculateBudgetProgress(budgets, transactions);
+const budgetsWithProgress = calculateBudgetProgress(budgets, transactions);
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.monthlyLimit, 0);
   const totalSpent = budgetsWithProgress.reduce((sum, budget) => sum + budget.spent, 0);
   const overBudgetCount = budgetsWithProgress.filter(b => b.status === "exceeded").length;
-
+  const warningBudgetCount = budgetsWithProgress.filter(b => b.status === "warning").length;
+  const alertBudgetCount = overBudgetCount + warningBudgetCount;
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -136,14 +153,45 @@ const Budgets = () => {
           </div>
         </div>
       )}
+{/* Budget Alerts */}
+      {alertBudgetCount > 0 && (
+        <div className="mb-6">
+          {overBudgetCount > 0 && (
+            <Alert 
+              variant="error" 
+              icon="AlertTriangle"
+              title="Budget Alert: Critical"
+              description={`${overBudgetCount} ${overBudgetCount === 1 ? 'budget has' : 'budgets have'} exceeded their limits. Review your spending to get back on track.`}
+              className="mb-3"
+            />
+          )}
+          
+          {warningBudgetCount > 0 && (
+            <Alert 
+              variant="warning" 
+              icon="AlertCircle"
+              title="Budget Warning"
+              description={`${warningBudgetCount} ${warningBudgetCount === 1 ? 'budget is' : 'budgets are'} approaching their limits (80%+). Consider reducing spending in these categories.`}
+            />
+          )}
+        </div>
+      )}
 
       {/* Budget Cards */}
       <div>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">Your Budgets</h3>
           {budgets.length > 0 && (
-            <div className="text-sm text-gray-600">
-              {budgets.length} {budgets.length === 1 ? "budget" : "budgets"} active
+            <div className="flex items-center space-x-4">
+              {alertBudgetCount > 0 && (
+                <div className="flex items-center space-x-1 text-sm font-medium text-red-600">
+                  <ApperIcon name="AlertTriangle" size={16} />
+                  <span>{alertBudgetCount} need attention</span>
+                </div>
+              )}
+              <div className="text-sm text-gray-600">
+                {budgets.length} {budgets.length === 1 ? "budget" : "budgets"} active
+              </div>
             </div>
           )}
         </div>
