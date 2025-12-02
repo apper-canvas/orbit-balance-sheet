@@ -1,0 +1,100 @@
+[
+  {
+    "Id": 1,
+    "name": "Groceries",
+    "type": "expense",
+    "icon": "ShoppingCart",
+    "color": "#10B981"
+  },
+  {
+    "Id": 2,
+    "name": "Transport",
+    "type": "expense",
+    "icon": "Car",
+    "color": "#3B82F6"
+  },
+  {
+    "Id": 3,
+    "name": "Entertainment",
+    "type": "expense",
+    "icon": "Film",
+    "color": "#8B5CF6"
+  },
+  {
+    "Id": 4,
+    "name": "Utilities",
+    "type": "expense",
+    "icon": "Zap",
+    "color": "#F59E0B"
+  },
+  {
+    "Id": 5,
+    "name": "Healthcare",
+    "type": "expense",
+    "icon": "Heart",
+    "color": "#EF4444"
+  },
+  {
+    "Id": 6,
+    "name": "Education",
+    "type": "expense",
+    "icon": "BookOpen",
+    "color": "#6366F1"
+  },
+  {
+    "Id": 7,
+    "name": "Dining",
+    "type": "expense",
+    "icon": "Utensils",
+    "color": "#F97316"
+  },
+  {
+    "Id": 8,
+    "name": "Shopping",
+    "type": "expense",
+    "icon": "ShoppingBag",
+    "color": "#EC4899"
+  },
+  {
+    "Id": 9,
+    "name": "Other",
+    "type": "expense",
+    "icon": "Circle",
+    "color": "#6B7280"
+  },
+  {
+    "Id": 10,
+    "name": "Salary",
+    "type": "income",
+    "icon": "DollarSign",
+    "color": "#059669"
+  },
+  {
+    "Id": 11,
+    "name": "Freelance",
+    "type": "income",
+    "icon": "Laptop",
+    "color": "#0D9488"
+  },
+  {
+    "Id": 12,
+    "name": "Investment",
+    "type": "income",
+    "icon": "TrendingUp",
+    "color": "#0EA5E9"
+  },
+  {
+    "Id": 13,
+    "name": "Gift",
+    "type": "income",
+    "icon": "Gift",
+    "color": "#F472B6"
+  },
+  {
+    "Id": 14,
+    "name": "Savings",
+    "type": "expense",
+    "icon": "PiggyBank",
+    "color": "#7C3AED"
+  }
+]

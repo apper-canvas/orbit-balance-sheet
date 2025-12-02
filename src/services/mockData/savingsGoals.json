@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "name": "Emergency Fund",
+    "targetAmount": 10000.00,
+    "currentAmount": 3500.00,
+    "targetDate": "2024-12-31T00:00:00.000Z",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Vacation to Europe",
+    "targetAmount": 5000.00,
+    "currentAmount": 1200.00,
+    "targetDate": "2024-07-15T00:00:00.000Z",
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "New Car Down Payment",
+    "targetAmount": 8000.00,
+    "currentAmount": 2500.00,
+    "targetDate": "2024-09-30T00:00:00.000Z",
+    "createdAt": "2024-01-10T00:00:00.000Z"
+  },
+  {
+    "Id": 4,
+    "name": "Home Renovation",
+    "targetAmount": 15000.00,
+    "currentAmount": 4800.00,
+    "targetDate": "2025-03-31T00:00:00.000Z",
+    "createdAt": "2024-01-05T00:00:00.000Z"
+  },
+  {
+    "Id": 5,
+    "name": "Investment Portfolio",
+    "targetAmount": 25000.00,
+    "currentAmount": 8750.00,
+    "targetDate": "2025-12-31T00:00:00.000Z",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]

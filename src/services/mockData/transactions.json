@@ -1,0 +1,137 @@
+[
+  {
+    "Id": 1,
+    "type": "expense",
+    "amount": 85.50,
+    "category": "Groceries",
+    "date": "2024-01-15T00:00:00.000Z",
+    "description": "Weekly grocery shopping",
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  },
+  {
+    "Id": 2,
+    "type": "income",
+    "amount": 3500.00,
+    "category": "Salary",
+    "date": "2024-01-01T00:00:00.000Z",
+    "description": "Monthly salary deposit",
+    "createdAt": "2024-01-01T09:00:00.000Z"
+  },
+  {
+    "Id": 3,
+    "type": "expense",
+    "amount": 45.20,
+    "category": "Transport",
+    "date": "2024-01-12T00:00:00.000Z",
+    "description": "Gas station fill up",
+    "createdAt": "2024-01-12T16:45:00.000Z"
+  },
+  {
+    "Id": 4,
+    "type": "expense",
+    "amount": 25.00,
+    "category": "Entertainment",
+    "date": "2024-01-10T00:00:00.000Z",
+    "description": "Movie tickets",
+    "createdAt": "2024-01-10T20:15:00.000Z"
+  },
+  {
+    "Id": 5,
+    "type": "expense",
+    "amount": 120.00,
+    "category": "Utilities",
+    "date": "2024-01-05T00:00:00.000Z",
+    "description": "Electricity bill payment",
+    "createdAt": "2024-01-05T14:22:00.000Z"
+  },
+  {
+    "Id": 6,
+    "type": "income",
+    "amount": 500.00,
+    "category": "Freelance",
+    "date": "2024-01-20T00:00:00.000Z",
+    "description": "Web development project",
+    "createdAt": "2024-01-20T11:30:00.000Z"
+  },
+  {
+    "Id": 7,
+    "type": "expense",
+    "amount": 75.00,
+    "category": "Dining",
+    "date": "2024-01-18T00:00:00.000Z",
+    "description": "Restaurant dinner",
+    "createdAt": "2024-01-18T19:45:00.000Z"
+  },
+  {
+    "Id": 8,
+    "type": "expense",
+    "amount": 200.00,
+    "category": "Shopping",
+    "date": "2024-01-14T00:00:00.000Z",
+    "description": "Clothing and accessories",
+    "createdAt": "2024-01-14T15:30:00.000Z"
+  },
+  {
+    "Id": 9,
+    "type": "expense",
+    "amount": 150.00,
+    "category": "Healthcare",
+    "date": "2024-01-08T00:00:00.000Z",
+    "description": "Doctor visit and medication",
+    "createdAt": "2024-01-08T10:15:00.000Z"
+  },
+  {
+    "Id": 10,
+    "type": "income",
+    "amount": 1000.00,
+    "category": "Investment",
+    "date": "2024-01-25T00:00:00.000Z",
+    "description": "Stock dividends",
+    "createdAt": "2024-01-25T09:00:00.000Z"
+  },
+  {
+    "Id": 11,
+    "type": "expense",
+    "amount": 92.30,
+    "category": "Groceries",
+    "date": "2023-12-20T00:00:00.000Z",
+    "description": "Holiday grocery shopping",
+    "createdAt": "2023-12-20T11:15:00.000Z"
+  },
+  {
+    "Id": 12,
+    "type": "income",
+    "amount": 3500.00,
+    "category": "Salary",
+    "date": "2023-12-01T00:00:00.000Z",
+    "description": "Monthly salary deposit",
+    "createdAt": "2023-12-01T09:00:00.000Z"
+  },
+  {
+    "Id": 13,
+    "type": "expense",
+    "amount": 50.00,
+    "category": "Transport",
+    "date": "2023-12-15T00:00:00.000Z",
+    "description": "Public transport monthly pass",
+    "createdAt": "2023-12-15T08:30:00.000Z"
+  },
+  {
+    "Id": 14,
+    "type": "expense",
+    "amount": 35.50,
+    "category": "Entertainment",
+    "date": "2023-12-22T00:00:00.000Z",
+    "description": "Streaming subscriptions",
+    "createdAt": "2023-12-22T12:00:00.000Z"
+  },
+  {
+    "Id": 15,
+    "type": "expense",
+    "amount": 300.00,
+    "category": "Savings",
+    "date": "2024-01-30T00:00:00.000Z",
+    "description": "Emergency fund contribution",
+    "createdAt": "2024-01-30T10:00:00.000Z"
+  }
+]

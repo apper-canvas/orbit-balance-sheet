@@ -1,0 +1,58 @@
+[
+  {
+    "Id": 1,
+    "category": "Groceries",
+    "monthlyLimit": 400.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 2,
+    "category": "Transport",
+    "monthlyLimit": 200.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 3,
+    "category": "Entertainment",
+    "monthlyLimit": 150.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 4,
+    "category": "Dining",
+    "monthlyLimit": 300.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 5,
+    "category": "Shopping",
+    "monthlyLimit": 250.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 6,
+    "category": "Utilities",
+    "monthlyLimit": 150.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  },
+  {
+    "Id": 7,
+    "category": "Healthcare",
+    "monthlyLimit": 200.00,
+    "currentSpent": 0,
+    "month": "January",
+    "year": 2024
+  }
+]
