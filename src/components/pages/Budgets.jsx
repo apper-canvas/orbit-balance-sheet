@@ -19,7 +19,15 @@ const Budgets = () => {
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
-
+// Calculate budgets with progress once budgets and transactions are loaded
+  const budgetsWithProgress = budgets.length > 0 && transactions.length > 0 
+    ? calculateBudgetProgress(budgets, transactions) 
+    : [];
+  const totalBudget = budgets.reduce((sum, budget) => sum + budget.monthlyLimit, 0);
+  const totalSpent = budgetsWithProgress.reduce((sum, budget) => sum + budget.spent, 0);
+  const overBudgetCount = budgetsWithProgress.filter(b => b.status === "exceeded").length;
+  const warningBudgetCount = budgetsWithProgress.filter(b => b.status === "warning").length;
+  const alertBudgetCount = overBudgetCount + warningBudgetCount;
 useEffect(() => {
     loadData();
   }, []);
@@ -85,13 +93,7 @@ useEffect(() => {
   if (loading) return <Loading message="Loading budgets..." />;
   if (error) return <ErrorView message={error} onRetry={loadData} />;
 
-const budgetsWithProgress = calculateBudgetProgress(budgets, transactions);
-  const totalBudget = budgets.reduce((sum, budget) => sum + budget.monthlyLimit, 0);
-  const totalSpent = budgetsWithProgress.reduce((sum, budget) => sum + budget.spent, 0);
-  const overBudgetCount = budgetsWithProgress.filter(b => b.status === "exceeded").length;
-  const warningBudgetCount = budgetsWithProgress.filter(b => b.status === "warning").length;
-  const alertBudgetCount = overBudgetCount + warningBudgetCount;
-  return (
+return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
