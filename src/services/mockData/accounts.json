@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 1,
+    "name": "Primary Checking",
+    "type": "checking",
+    "accountNumber": "****1234",
+    "balance": 3547.89,
+    "bank": "Chase Bank",
+    "description": "Main checking account for daily expenses",
+    "isActive": true,
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Emergency Savings",
+    "type": "savings",
+    "accountNumber": "****5678",
+    "balance": 12847.32,
+    "bank": "Wells Fargo",
+    "description": "Emergency fund - 6 months expenses",
+    "isActive": true,
+    "createdAt": "2024-01-20T14:15:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Travel Rewards Card",
+    "type": "credit",
+    "accountNumber": "****9012",
+    "balance": -1523.76,
+    "bank": "Capital One",
+    "description": "Travel rewards credit card",
+    "isActive": true,
+    "creditLimit": 8000,
+    "createdAt": "2024-02-01T09:45:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "High-Yield Savings",
+    "type": "savings",
+    "accountNumber": "****3456",
+    "balance": 8934.15,
+    "bank": "Ally Bank",
+    "description": "High-yield online savings account",
+    "isActive": true,
+    "createdAt": "2024-02-10T16:20:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "401k Retirement",
+    "type": "investment",
+    "accountNumber": "****7890",
+    "balance": 45678.90,
+    "bank": "Vanguard",
+    "description": "Employer 401k retirement account",
+    "isActive": true,
+    "createdAt": "2024-01-05T08:00:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "Business Checking",
+    "type": "checking",
+    "accountNumber": "****2468",
+    "balance": 7892.45,
+    "bank": "Bank of America",
+    "description": "Business checking account",
+    "isActive": true,
+    "createdAt": "2024-03-01T11:30:00Z"
+  },
+  {
+    "Id": 7,
+    "name": "Cash Back Card",
+    "type": "credit",
+    "accountNumber": "****1357",
+    "balance": -892.34,
+    "bank": "Discover",
+    "description": "Cash back rewards credit card",
+    "isActive": true,
+    "creditLimit": 5000,
+    "createdAt": "2024-03-15T13:45:00Z"
+  },
+  {
+    "Id": 8,
+    "name": "Roth IRA",
+    "type": "investment",
+    "accountNumber": "****9753",
+    "balance": 23456.78,
+    "bank": "Fidelity",
+    "description": "Roth IRA investment account",
+    "isActive": true,
+    "createdAt": "2024-01-10T15:30:00Z"
+  }
+]
